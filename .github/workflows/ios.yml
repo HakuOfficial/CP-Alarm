@@ -1,0 +1,47 @@
+name: CP Alarm iOS
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      signed:
+        description: Export a signed App Store IPA
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      BUNDLE_ID: ${{ vars.BUNDLE_ID || 'com.kuda.cpalarm' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Prepare Flutter and Xcode project
+        run: |
+          xcodebuild -version
+          gem install --user-install xcodeproj --no-document
+          bash tool/bootstrap_ios.sh
+      - name: Check and test
+        run: |
+          flutter analyze --no-fatal-infos --no-fatal-warnings
+          flutter test
+          flutter build ios --simulator --debug
+      - name: Install distribution identity and export
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.signed }}
+        env:
+          APPLE_P12_B64: ${{ secrets.APPLE_P12_B64 }}
+          APPLE_P12_PASSWORD: ${{ secrets.APPLE_P12_PASSWORD }}
+          APPLE_PROFILE_B64: ${{ secrets.APPLE_PROFILE_B64 }}
+        run: bash tool/sign_ipa.sh
+      - uses: actions/upload-artifact@v4
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.signed }}
+        with:
+          name: CP-Alarm-IPA
+          path: build/ios/ipa/*.ipa
+          if-no-files-found: error

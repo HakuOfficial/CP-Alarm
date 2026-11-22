@@ -1,0 +1,38 @@
+name: cp_alarm
+description: Thời khóa biểu luyện tập và báo thức cho lập trình thi đấu.
+publish_to: none
+version: 1.0.0+1
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  flutter_riverpod: ^3.0.0
+  sqflite: ^2.4.2
+  dio: ^5.9.0
+  html: ^0.15.6
+  flutter_local_notifications: ^23.0.3
+  timezone: any
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/fonts/OFL.txt
+  fonts:
+    - family: Be Vietnam Pro
+      fonts:
+        - asset: assets/fonts/be-vietnam-pro-400.ttf
+          weight: 400
+        - asset: assets/fonts/be-vietnam-pro-500.ttf
+          weight: 500
+        - asset: assets/fonts/be-vietnam-pro-600.ttf
+          weight: 600
+        - asset: assets/fonts/be-vietnam-pro-700.ttf
+          weight: 700
+        - asset: assets/fonts/be-vietnam-pro-800.ttf
+          weight: 800
