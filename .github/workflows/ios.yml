@@ -45,3 +45,17 @@ jobs:
           name: CP-Alarm-IPA
           path: build/ios/ipa/*.ipa
           if-no-files-found: error
+      - name: Build unsigned IPA for sideloading
+        if: ${{ github.event_name == 'workflow_dispatch' && !inputs.signed }}
+        run: |
+          flutter build ios --release --no-codesign
+          ls build/ios/iphoneos
+          mkdir -p Payload
+          cp -r build/ios/iphoneos/*.app Payload/
+          zip -qr CP-Alarm-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        if: ${{ github.event_name == 'workflow_dispatch' && !inputs.signed }}
+        with:
+          name: CP-Alarm-unsigned-IPA
+          path: CP-Alarm-unsigned.ipa
+          if-no-files-found: error
